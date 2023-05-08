@@ -104,6 +104,8 @@ func (h *VoteExtHandler) ExtendVoteHandler() ExtendVoteHandler {
 		h.currentBlock = req.Height
 		h.lastPriceSyncTS = time.Now()
 
+		h.logger.Info("computing oracle prices for vote extension", "height", req.Height, "time", h.lastPriceSyncTS)
+
 		g := new(errgroup.Group)
 		providerAgg := NewProviderAggregator()
 		requiredRates := make(map[string]struct{})
@@ -220,6 +222,17 @@ func (h *VoteExtHandler) computeOraclePrices(providerAgg *ProviderAggregator) (p
 
 func (h *VoteExtHandler) VerifyVoteExtensionHandler() VerifyVoteExtensionHandler {
 	return func(ctx sdk.Context, req *RequestVerifyVoteExtension) (*ResponseVerifyVoteExtension, error) {
-		panic("not implemented")
+		var voteExt OracleVoteExtension
+
+		err := json.Unmarshal(req.VoteExtension, &voteExt)
+		if err != nil {
+			// NOTE: It is safe to return an error as the Cosmos SDK will capture all
+			// errors, log them, and reject the proposal.
+			return nil, fmt.Errorf("failed to unmarshal vote extension: %w", err)
+		}
+
+		if voteExt.Height != req.Height {
+			return nil, fmt.Errorf("vote extension height does not match request height; expected: %d, got: %d", req.Height, voteExt.Height)
+		}
 	}
 }
