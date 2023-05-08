@@ -31,9 +31,9 @@ for a block proposal.
 In the context of an Oracle, this is where the application would verify another
 validator's computed oracle prices and compare the results to what it computed in
 `ExtendVote`. Recall, CometBFT will call `VerifyVoteExtension` for every single
-pre-commit it receives. Verification of another validator's prices might include
-ensuring the price for each supported currency pair is within a certain threshold
-to its own and that no unsupported currency pairs are included.
+pre-commit it receives (but never for its own). Verification of another validator's
+prices might include ensuring the price for each supported currency pair is within
+a certain threshold to its own and that no unsupported currency pairs are included.
 
 ## PrepareProposal
 
