@@ -109,17 +109,12 @@ func (h *VoteExtHandler) ExtendVoteHandler() ExtendVoteHandler {
 
 		g := new(errgroup.Group)
 		providerAgg := NewProviderAggregator()
-		requiredRates := make(map[string]struct{})
 
+		// How an application determines which providers to use and for which pairs
+		// can be done in a variety of ways. For demo purposes, we presume they are
+		// locally configured. However, providers can be governed by governance.
 		for providerName, currencyPairs := range h.providerPairs {
 			priceProvider := h.providers[providerName]
-
-			// create/update set of all required prices for base assets
-			for _, pair := range currencyPairs {
-				if _, ok := requiredRates[pair.Base]; !ok {
-					requiredRates[pair.Base] = struct{}{}
-				}
-			}
 
 			// Launch a goroutine to fetch ticker prices from this oracle provider.
 			// Recall, vote extensions are not required to be deterministic.
@@ -187,14 +182,14 @@ func (h *VoteExtHandler) ExtendVoteHandler() ExtendVoteHandler {
 			return nil, err
 		}
 
-		for base := range requiredRates {
-			if _, ok := computedPrices[base]; !ok {
+		for _, cp := range h.FauxOracleKeeper.GetSupportedPairs(ctx) {
+			if _, ok := computedPrices[cp.Base]; !ok {
 				// In the case where we fail to retrieve latest prices for a supported
 				// pair, applications may have different strategies. For example, they
 				// may ignore this situation entirely and rely on stale prices, or they
 				// may choose to not produce a vote and instead error. We perform the
 				// latter here.
-				return nil, fmt.Errorf("failed to find price for %s", base)
+				return nil, fmt.Errorf("failed to find price for %s", cp.Base)
 			}
 		}
 
