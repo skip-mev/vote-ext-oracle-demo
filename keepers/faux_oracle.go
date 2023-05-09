@@ -1,6 +1,7 @@
 package keepers
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -34,10 +35,17 @@ func (cp CurrencyPair) String() string {
 	return cp.Base + cp.Quote
 }
 
-type FauxOracleKeeper struct{}
+type FauxOracleKeeper struct {
+	prices map[string]math.LegacyDec
+}
 
 func (k FauxOracleKeeper) GetSupportedPairs(_ sdk.Context) []CurrencyPair {
 	return []CurrencyPair{
 		{Base: "ATOM", Quote: "USD"},
 	}
+}
+
+func (k FauxOracleKeeper) SetOraclePrices(_ sdk.Context, prices map[string]math.LegacyDec) error {
+	k.prices = prices
+	return nil
 }
