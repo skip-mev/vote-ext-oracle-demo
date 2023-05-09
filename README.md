@@ -37,4 +37,18 @@ a certain threshold to its own and that no unsupported currency pairs are includ
 
 ## PrepareProposal
 
+In `abci/proposal.go`, you'll find the `ProposalHandler` handler type. This handler
+implements the `PrepareProposalHandler` ABCI method. This method is called by the
+CometBFT client when a new block proposal is being prepared.
+
+In the context of an Oracle, this is where the proposer would receive the agreed
+upon vote extensions with their signatures. The proposer would then compute the
+stake-weighted average of all the supported/required currency pairs. It would
+then include the resulting stake-weighted average prices along with all the vote
+extensions it used to compute them in a `StakeWeightedPrices` structure. The
+proposer would then encode this structure and inject it into the block proposal,
+essentially treating it as a fake transaction. The remainder of the block proposal
+can proceed at the application's discretion, e.g. executing POB and normal transaction
+inclusion.
+
 ## ProcessProposal

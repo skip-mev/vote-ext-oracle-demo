@@ -16,13 +16,13 @@ type (
 		TimeStamp int64   // timestamp
 	}
 
-	// AggregatedProviderPrices defines a type alias for a map
-	// of provider -> asset -> TickerPrice
+	// AggregatedProviderPrices defines a type alias for a map of
+	// provider -> asset -> TickerPrice (e.g. Binance -> ATOM/USD -> 11.98)
 	AggregatedProviderPrices map[string]map[string]TickerPrice
 
-	// AggregatedProviderCandles defines a type alias for a map
-	// of provider -> asset -> []types.CandlePrice
-	AggregatedProviderCandles map[Name]map[string][]types.CandlePrice
+	// AggregatedProviderCandles defines a type alias for a map of
+	// provider -> asset -> []CandlePrice (e.g. Binance -> ATOM/USD -> [<11.98, 24000, 12:00UTC>])
+	AggregatedProviderCandles map[string]map[string][]CandlePrice
 )
 
 type CurrencyPair struct {
@@ -36,7 +36,7 @@ func (cp CurrencyPair) String() string {
 
 type FauxOracleKeeper struct{}
 
-func (k FauxOracleKeeper) GetSupportedPairs() []CurrencyPair {
+func (k FauxOracleKeeper) GetSupportedPairs(_ sdk.Context) []CurrencyPair {
 	return []CurrencyPair{
 		{Base: "ATOM", Quote: "USD"},
 	}
