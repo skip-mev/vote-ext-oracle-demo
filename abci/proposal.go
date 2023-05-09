@@ -70,6 +70,8 @@ func (h *ProposalHandler) PrepareProposal() sdk.PrepareProposalHandler {
 			VoteExtensions:      req.LocalLastCommit.Votes,
 		}
 
+		// NOTE: We use stdlib JSON encoding, but an application may choose to use
+		// a performant mechanism. This is for demo purposes only.
 		bz, err := json.Marshal(injectedTx)
 		if err != nil {
 			// NOTE: In SDK v0.48.x, we'd return an error here.
