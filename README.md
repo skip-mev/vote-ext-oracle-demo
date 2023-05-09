@@ -52,3 +52,14 @@ can proceed at the application's discretion, e.g. executing POB and normal trans
 inclusion.
 
 ## ProcessProposal
+
+In `abci/proposal.go`, you'll find the `ProposalHandler` handler type. This handler
+implements the `ProcessProposalHandler` ABCI method. This method is called by the
+CometBFT client when a validator needs to process a block proposal.
+
+In the context of Oracle, this is where the application would verify the vote
+extensions and the stake-weighted prices included in the block proposal. It would
+ensure that the vote extensions are valid and that the stake-weighted prices are
+what they should be by calculating them itself. If the stake-weighted prices are
+valid, it will update state to persist the oracle prices to be used for the block
+and proceed to process the remainder of the proposal.
