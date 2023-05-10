@@ -3,14 +3,14 @@ module github.com/skip-mev/vote-ext-oracle-demo
 go 1.20
 
 require (
+	cosmossdk.io/math v1.0.0
 	github.com/cometbft/cometbft v0.38.0-alpha.1
 	github.com/cosmos/cosmos-sdk v0.47.2
-	github.com/neilotoole/errgroup v0.1.6
+	golang.org/x/sync v0.1.0
 )
 
 require (
 	cosmossdk.io/errors v1.0.0-beta.7 // indirect
-	cosmossdk.io/math v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect

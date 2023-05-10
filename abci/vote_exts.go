@@ -8,8 +8,8 @@ import (
 
 	"github.com/cometbft/cometbft/libs/log"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/neilotoole/errgroup"
 	"github.com/skip-mev/vote-ext-oracle-demo/keepers"
+	"golang.org/x/sync/errgroup"
 )
 
 // Provider defines an interface for fetching prices and candles for a given set
