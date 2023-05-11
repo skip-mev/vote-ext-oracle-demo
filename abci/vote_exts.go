@@ -95,7 +95,6 @@ type VoteExtHandler struct {
 	providerTimeout time.Duration                     // timeout for fetching prices from providers
 	providers       map[string]Provider               // mapping of provider name to provider (e.g. Binance -> BinanceProvider)
 	providerPairs   map[string][]keepers.CurrencyPair // mapping of provider name to supported pairs (e.g. Binance -> [ATOM/USD])
-	computedPrices  map[int64]map[string]sdk.Dec      // mapping of block height to computed oracle prices (used for verification)
 
 	FauxOracleKeeper keepers.FauxOracleKeeper
 }
@@ -206,10 +205,6 @@ func (h *VoteExtHandler) ExtendVoteHandler() ExtendVoteHandler {
 			return nil, fmt.Errorf("failed to marshal vote extension: %w", err)
 		}
 
-		// TODO/XXX: A real application would likely want to persist these prices
-		// and ensure they're pruned when no longer needed.
-		h.computedPrices[req.Height] = computedPrices
-
 		return &ResponseExtendVote{VoteExtension: bz}, nil
 	}
 }
@@ -229,6 +224,9 @@ func (h *VoteExtHandler) VerifyVoteExtensionHandler() VerifyVoteExtensionHandler
 			return nil, fmt.Errorf("vote extension height does not match request height; expected: %d, got: %d", req.Height, voteExt.Height)
 		}
 
+		// Verify incoming prices from a validator are valid. Note, verification during
+		// VerifyVoteExtensionHandler MUST be deterministic. For brevity and demo
+		// purposes, we omit implementation.
 		if err := h.verifyOraclePrices(ctx, voteExt.Prices); err != nil {
 			return nil, fmt.Errorf("failed to verify oracle prices from validator %X: %w", req.ValidatorAddress, err)
 		}
@@ -244,8 +242,5 @@ func (h *VoteExtHandler) computeOraclePrices(providerAgg *ProviderAggregator) (p
 }
 
 func (h *VoteExtHandler) verifyOraclePrices(ctx sdk.Context, prices map[string]sdk.Dec) error {
-	// Verify incoming prices from a validator are within a reasonable range based
-	// on our own prices, i.e. h.computedPrices. For brevity and demo purposes, we
-	// omit implementation.
 	return nil
 }

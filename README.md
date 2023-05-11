@@ -15,7 +15,7 @@ In the context of an Oracle, this is where the application would fetch prices
 for a supported list of currency pairs. In terms of which pairs are supported and
 what providers are used is up to the application. Since we're implementing an
 in-process Oracle, it naturally makes sense for these to exist on-chain to be
-governed by governance.
+governed by governance. Note, `ExtendVote` does NOT need to be deterministic.
 
 Each validator will have `ExtendVote` called. It will fetch and aggregate prices,
 then it will compute prices using TWAP for example, persist them either ephemerally
@@ -29,11 +29,11 @@ the CometBFT client when it verifies another validator's "extended" pre-commit
 for a block proposal.
 
 In the context of an Oracle, this is where the application would verify another
-validator's computed oracle prices and compare the results to what it computed in
-`ExtendVote`. Recall, CometBFT will call `VerifyVoteExtension` for every single
-pre-commit it receives (but never for its own). Verification of another validator's
-prices might include ensuring the price for each supported currency pair is within
-a certain threshold to its own and that no unsupported currency pairs are included.
+validator's computed oracle prices. Recall, CometBFT will call `VerifyVoteExtension`
+for every single pre-commit it receives (but never for its own). Verification of
+another validator's prices might include ensuring that no unsupported currency
+pairs are included and that each price is a valid price. Note, `VerifyVoteExtension`
+MUST be deterministic and thus any verification must be deterministic as well.
 
 ## PrepareProposal
 
